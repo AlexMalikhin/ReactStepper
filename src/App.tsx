@@ -1,26 +1,26 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, {useState} from 'react';
+import {Stepper} from "@mui/material";
+import {Box} from "@mui/material";
+import {Button} from "@mui/material";
+import mock from './mock/index.json';
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    const [activeStep, setActiveStep] = useState(0)
+    console.log(mock)
+    return (
+        <div className="App">
+            <Box sx={{maxWidth: 400}}>
+                <Stepper activeStep={activeStep}>
+                    <Button
+                        variant="contained"
+                        sx={{mt: 1, mr: 1}}
+                    >
+                        hello
+                    </Button>
+                </Stepper>
+            </Box>
+        </div>
+    );
 }
 
 export default App;
