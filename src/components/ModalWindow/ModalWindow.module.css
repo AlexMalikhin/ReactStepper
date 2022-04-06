@@ -1,0 +1,11 @@
+.wrapper{
+  position: absolute;
+  width: 100vw;
+  background: #134EE7;
+  height: 100vh;
+  backdrop-filter: blur(8px);
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

@@ -1,23 +1,23 @@
 [
   {
-    "name": "name",
+    "name": "firstname",
     "label": "Имя",
     "type": "STRING",
     "max_length": 255,
     "min_length": 3,
-    "regex": ",^[a-zA-Z's']+$"
+    "regex": "[A-Za-zА-Яа-яЁё]{1,}"
   },
   {
-    "name": "surname",
+    "name": "lastname",
     "label": "Фамилия",
     "type": "STRING",
     "max_length": 255,
     "min_length": 3,
-    "regex": "^[a-zA-Z\s]+$"
+    "regex": "[A-Za-zА-Яа-яЁё]{1,}"
   },
   {
     "name": "age",
-    "label": "Полных лет",
+    "label": "Возраст",
     "type": "NUMBER",
     "min": 1,
     "max": 100
@@ -28,7 +28,7 @@
     "type": "EMAIL"
   },
   {
-    "name": "tel",
+    "name": "telephone",
     "label": "Номер телефона",
     "type": "text",
     "mask": "+7(9**)-***-**-**"

@@ -1,22 +1,114 @@
 import React, {useState} from 'react';
-import {Stepper} from "@mui/material";
-import {Box} from "@mui/material";
-import {Button} from "@mui/material";
-import mock from './mock/index.json';
+import {Stepper, Box, Step, StepLabel, StepContent, Button, Typography} from "@mui/material";
+import {Input} from "./components/Input/Input";
+import steps from './mock/steps.json';
+import mock from './mock/backend.json';
+import {ModalWindow} from "./components/ModalWindow/ModalWindow";
+import {getValue} from "./utils/utils";
+
+export interface InputsState {
+    firstname: string | null,
+    lastname: string | null,
+    age: number | null | string,
+    email: string | null,
+    telephone: string | number | null
+}
+
+export interface MockType {
+    name: string;
+    label: string;
+    type: string;
+    max_length?: number;
+    min_length?: number;
+    regex?: string;
+    min?: number;
+    max?: number;
+    mask?: string;
+}
 
 function App() {
-    const [activeStep, setActiveStep] = useState(0)
-    console.log(mock)
+    const [activeStep, setActiveStep] = useState(0);
+    const [isOpenModal, setIsOpenModal] = useState(false);
+    const [inputValues, setInputValues] = useState({})
+
+    const isValidInput = (regexp: any, value: any) => {
+        const reg = new RegExp(regexp)
+        return !reg.test(value)
+    }
+    const changeValue = (event: any, currentValue: any) => {
+        setInputValues((prevState) => ({...prevState, [currentValue]: event.target.value}))
+    }
+    const handleNext = () => {
+        setActiveStep((prevActiveStep) => prevActiveStep + 1);
+    };
+    const handlePrev = () => {
+        setActiveStep((prevActiveStep) => prevActiveStep - 1);
+    }
+    const openModal = () => {
+        setIsOpenModal(true)
+        setActiveStep(0)
+    }
+    const closeModal = () => {
+        setIsOpenModal(false)
+    }
+    const regexpArray = {
+        email: '^\\S+@\\S+\\.\\S+$',
+        number: '^(?:1(?:00?|\\d)|[2-5]\\d|[6-9]\\d?)$'
+        // text: '^((8|\+7)[\- ]?)?(\(?\d{3}\)?[\- ]?)?[\d\- ]{10,11}$'
+    }
+
+
     return (
         <div className="App">
-            <Box sx={{maxWidth: 400}}>
-                <Stepper activeStep={activeStep}>
-                    <Button
-                        variant="contained"
-                        sx={{mt: 1, mr: 1}}
-                    >
-                        hello
-                    </Button>
+            <ModalWindow open={isOpenModal} close={closeModal}/>
+            <Box sx={{maxWidth: 400, mt: 20, ml: 45}}>
+                <Stepper activeStep={activeStep} orientation="vertical">
+                    {mock.map((step: MockType, index) => (
+                        <Step key={steps[index].label}>
+                            <StepLabel
+                                optional={
+                                    index === 4 ? (
+                                        <Typography variant="caption">Последний шаг</Typography>
+                                    ) : null
+                                }
+                            >
+                                {steps[index].label}
+                            </StepLabel>
+                            <StepContent>
+                                <Typography
+                                    sx={{display: 'flex', flexDirection: 'column'}}>{steps[index].description}
+                                </Typography>
+                                <Input
+                                    // errorText={}
+                                    errorState={step?.regex ? isValidInput(step?.regex, getValue(inputValues, step?.name)) : isValidInput(regexpArray[step.type.toLowerCase()], getValue(inputValues, step?.name))}
+                                    label={step.label}
+                                    value={getValue(inputValues, step.name)}
+                                    changeValue={changeValue}
+                                    nameValue={step.name}
+                                    inputType={step.type.toLowerCase()}
+                                />
+                                <Box sx={{mb: 2}}>
+                                    <div>
+                                        <Button
+                                            disabled={step?.regex ? isValidInput(step?.regex, getValue(inputValues, step?.name)) : isValidInput(regexpArray[step.type.toLowerCase()], getValue(inputValues, step?.name))}
+                                            variant="contained"
+                                            onClick={index === mock.length - 1 ? openModal : handleNext}
+                                            sx={{mt: 1, mr: 1}}
+                                        >
+                                            {index === mock.length - 1 ? 'Отправить заявку' : 'Продолжить'}
+                                        </Button>
+                                        <Button
+                                            disabled={index === 0}
+                                            onClick={handlePrev}
+                                            sx={{mt: 1, mr: 1}}
+                                        >
+                                            Назад
+                                        </Button>
+                                    </div>
+                                </Box>
+                            </StepContent>
+                        </Step>
+                    ))}
                 </Stepper>
             </Box>
         </div>
