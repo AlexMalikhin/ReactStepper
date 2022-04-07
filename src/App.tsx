@@ -5,6 +5,8 @@ import steps from './mock/steps.json';
 import mock from './mock/backend.json';
 import {ModalWindow} from "./components/ModalWindow/ModalWindow";
 import {getValue} from "./utils/utils";
+import {useDispatch, useSelector} from "react-redux";
+import {getUserDataAction} from "./store/userReducer/userReducer";
 
 export interface InputsState {
     firstname: string | null,
@@ -30,6 +32,7 @@ function App() {
     const [activeStep, setActiveStep] = useState(0);
     const [isOpenModal, setIsOpenModal] = useState(false);
     const [inputValues, setInputValues] = useState({})
+    const dispatch = useDispatch()
 
     const isValidInput = (regexp: any, value: any) => {
         const reg = new RegExp(regexp)
@@ -45,18 +48,21 @@ function App() {
         setActiveStep((prevActiveStep) => prevActiveStep - 1);
     }
     const openModal = () => {
+        dispatch(getUserDataAction(inputValues))
         setIsOpenModal(true)
         setActiveStep(0)
+        setInputValues({})
+
     }
     const closeModal = () => {
         setIsOpenModal(false)
     }
-    const regexpArray = {
-        email: '^\\S+@\\S+\\.\\S+$',
-        number: '^(?:1(?:00?|\\d)|[2-5]\\d|[6-9]\\d?)$'
-        // text: '^((8|\+7)[\- ]?)?(\(?\d{3}\)?[\- ]?)?[\d\- ]{10,11}$'
-    }
 
+    const regexpArray: any = {
+        email: '^\\S+@\\S+\\.\\S+$',
+        number: '^(?:1(?:00?|\\d)|[2-5]\\d|[6-9]\\d?)$',
+        tel: '^((8|\\+7)[\\- ]?)?(\\(?\\d{3}\\)?[\\- ]?)?[\\d\\- ]{10}$',
+    }
 
     return (
         <div className="App">
@@ -64,7 +70,7 @@ function App() {
             <Box sx={{maxWidth: 400, mt: 20, ml: 45}}>
                 <Stepper activeStep={activeStep} orientation="vertical">
                     {mock.map((step: MockType, index) => (
-                        <Step key={steps[index].label}>
+                        <Step key={steps[index]?.label}>
                             <StepLabel
                                 optional={
                                     index === 4 ? (
@@ -72,25 +78,29 @@ function App() {
                                     ) : null
                                 }
                             >
-                                {steps[index].label}
+                                {step.label}
                             </StepLabel>
                             <StepContent>
-                                <Typography
-                                    sx={{display: 'flex', flexDirection: 'column'}}>{steps[index].description}
-                                </Typography>
+                                {/*<Typography*/}
+                                {/*    sx={{display: 'flex', flexDirection: 'column'}}>{steps[index]?.description}*/}
+                                {/*</Typography>*/}
                                 <Input
-                                    // errorText={}
-                                    errorState={step?.regex ? isValidInput(step?.regex, getValue(inputValues, step?.name)) : isValidInput(regexpArray[step.type.toLowerCase()], getValue(inputValues, step?.name))}
-                                    label={step.label}
-                                    value={getValue(inputValues, step.name)}
+                                    // minLength={step.min_length}
+                                    // maxLength={step.max_length}
+                                    errorMessage={steps[index]?.errorText}
+                                    label={step?.label}
+                                    value={getValue(inputValues, step?.name)}
                                     changeValue={changeValue}
-                                    nameValue={step.name}
-                                    inputType={step.type.toLowerCase()}
+                                    nameValue={step?.name}
+                                    inputType={step?.type?.toLowerCase()}
+                                    regexp={step?.regex ? step?.regex : regexpArray[step?.type?.toLowerCase()]}
                                 />
                                 <Box sx={{mb: 2}}>
                                     <div>
                                         <Button
-                                            disabled={step?.regex ? isValidInput(step?.regex, getValue(inputValues, step?.name)) : isValidInput(regexpArray[step.type.toLowerCase()], getValue(inputValues, step?.name))}
+                                            disabled={step?.regex
+                                                ? isValidInput(step?.regex, getValue(inputValues, step?.name))
+                                                : isValidInput(regexpArray[step.type.toLowerCase()], getValue(inputValues, step?.name))}
                                             variant="contained"
                                             onClick={index === mock.length - 1 ? openModal : handleNext}
                                             sx={{mt: 1, mr: 1}}

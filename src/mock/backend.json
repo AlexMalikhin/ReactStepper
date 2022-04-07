@@ -16,10 +16,25 @@
     "regex": "[A-Za-zА-Яа-яЁё]{1,}"
   },
   {
+    "name": "middlename",
+    "label": "Отчество",
+    "type": "STRING",
+    "max_length": 255,
+    "min_length": 3,
+    "regex": "[A-Za-zА-Яа-яЁё]{1,}"
+  },
+  {
     "name": "age",
     "label": "Возраст",
     "type": "NUMBER",
-    "min": 1,
+    "min": 6,
+    "max": 100
+  },
+  {
+    "name": "age",
+    "label": "Возраст",
+    "type": "NUMBER",
+    "min": 6,
     "max": 100
   },
   {
@@ -30,7 +45,7 @@
   {
     "name": "telephone",
     "label": "Номер телефона",
-    "type": "text",
+    "type": "tel",
     "mask": "+7(9**)-***-**-**"
   }
 ]

@@ -1,13 +1,14 @@
 import modalWindowStyles from './ModalWindow.module.css';
 import {Box, Modal, Typography} from "@mui/material";
 import React from "react";
+import {useSelector} from "react-redux";
 
-interface ModalWindowProps{
+interface ModalWindowProps {
     open: boolean,
-    close: ()=>void
+    close: () => void
 }
 
-export const ModalWindow:React.FC<ModalWindowProps> = ({open, close}) =>{
+export const ModalWindow: React.FC<ModalWindowProps> = ({open, close}) => {
     const style = {
         position: 'absolute',
         top: '50%',
@@ -20,7 +21,10 @@ export const ModalWindow:React.FC<ModalWindowProps> = ({open, close}) =>{
         borderRadius: 2,
         p: 4,
     };
-    return(
+    const userData = useSelector(state => state)
+    console.log(userData)
+
+    return (
         <Modal
             open={open}
             onClose={close}
@@ -31,9 +35,13 @@ export const ModalWindow:React.FC<ModalWindowProps> = ({open, close}) =>{
                 <Typography id="modal-modal-title" variant="h6" component="h2">
                     Успех!
                 </Typography>
-                <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-                    Ваша заявка успешно отправлена в нашу службу поддержки, мы свяжемся с вами в течении суток с момента подачи заявки по указанному вами номеру.
+                <Typography id="modal-modal-description" sx={{mt: 2}}>
+                    Ваша заявка успешно отправлена в нашу службу поддержки, мы свяжемся с вами в течении суток с момента
+                    подачи заявки по указанному вами номеру.
                 </Typography>
+                {userData && Object.keys(userData).map((item) => (
+                    <Typography>{userData[item]}</Typography>
+                ))}
             </Box>
         </Modal>
     )
